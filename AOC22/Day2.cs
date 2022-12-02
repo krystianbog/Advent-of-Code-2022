@@ -28,7 +28,7 @@
                 Y = Draw
                 Z = Win
             */
-            var input = File.ReadAllText("../../../inputD2.txt");
+            var input = File.ReadAllText("../../../inputd2.txt");
 
             var inputList = input.Split("\n").ToList();
             inputList.RemoveAll(x => x == string.Empty);

@@ -4,7 +4,7 @@
     {
         public static void Run()
         {
-            var input = File.ReadAllText("../../../inputD1.txt");
+            var input = File.ReadAllText("../../../inputd1.txt");
             var inputList = input.Split("\n\n").ToList();
             int max = 0;
             var sumList = new List<int>();
