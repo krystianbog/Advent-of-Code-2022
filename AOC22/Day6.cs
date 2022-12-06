@@ -10,11 +10,11 @@
         {
             var input = File.ReadAllText(_inputFilePath);
 
-            SearchForFirstOccurance(1, input, _startOfPacketMarker);
-            SearchForFirstOccurance(2, input, _messageMarker);
+            Console.WriteLine($"D6 PT1: {SearchForFirstOccurance(input, _startOfPacketMarker)}");
+            Console.WriteLine($"D6 PT2: {SearchForFirstOccurance(input, _messageMarker)}");
         }
 
-        static void SearchForFirstOccurance(int partNumber, string input, int uniqueMarker)
+        static int SearchForFirstOccurance(string input, int uniqueMarker)
         {
             for (int i = uniqueMarker; i < input.Length; i++)
             {
@@ -22,11 +22,11 @@
 
                 if (substringInput.All(x => substringInput.Count(y => x == y) == 1))
                 {
-                    Console.WriteLine($"D6 PT{partNumber}: {i}");
-
-                    break;
+                    return i;
                 }
             }
+
+            return -1;
         }
     }
 }
