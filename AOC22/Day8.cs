@@ -11,39 +11,39 @@
             var inputList = input.Split(_inputLineSeparator).Where(x => !string.IsNullOrEmpty(x)).ToList();
 
             var treeList = new List<Tree>();
-            int coordinateXCounter = 0;
+            int coordinateRowCounter = 0;
 
             foreach (var treeLine in inputList)
             {
-                int coordinateYCounter = 0;
+                int coordinateColumnCounter = 0;
 
                 foreach (var tree in treeLine)
                 {
-                    treeList.Add(new Tree(coordinateXCounter, coordinateYCounter, Convert.ToInt32(tree.ToString())));
+                    treeList.Add(new Tree(coordinateRowCounter, coordinateColumnCounter, Convert.ToInt32(tree.ToString())));
 
-                    coordinateYCounter++;
+                    coordinateColumnCounter++;
                 }
 
-                coordinateXCounter++;
+                coordinateRowCounter++;
             }
 
             //PT1
             foreach (var tree in treeList)
             {
                 bool obstructedViewFromLeft = treeList
-                    .Where(x => x.CoordinateX < tree.CoordinateX && x.CoordinateY == tree.CoordinateY)
+                    .Where(x => x.CoordinateColumn < tree.CoordinateColumn && x.CoordinateRow == tree.CoordinateRow)
                     .Any(x => x.Height >= tree.Height);
 
                 bool obstructedViewFromUp = treeList
-                    .Where(x => x.CoordinateX == tree.CoordinateX && x.CoordinateY < tree.CoordinateY)
+                    .Where(x => x.CoordinateColumn == tree.CoordinateColumn && x.CoordinateRow < tree.CoordinateRow)
                     .Any(x => x.Height >= tree.Height);
 
                 bool obstructedViewFromRight = treeList
-                    .Where(x => x.CoordinateX > tree.CoordinateX && x.CoordinateY == tree.CoordinateY)
+                    .Where(x => x.CoordinateColumn > tree.CoordinateColumn && x.CoordinateRow == tree.CoordinateRow)
                     .Any(x => x.Height >= tree.Height);
 
                 bool obstructedViewFromDown = treeList
-                    .Where(x => x.CoordinateX == tree.CoordinateX && x.CoordinateY > tree.CoordinateY)
+                    .Where(x => x.CoordinateColumn == tree.CoordinateColumn && x.CoordinateRow > tree.CoordinateRow)
                     .Any(x => x.Height >= tree.Height);
 
                 if (obstructedViewFromLeft && obstructedViewFromUp && obstructedViewFromRight && obstructedViewFromDown)
@@ -52,98 +52,154 @@
                 }
             }
 
+            Console.WriteLine($"D8 PT1: {treeList.Count(x => x.IsVisibleFromOutside)}");
+
             //PT2
             foreach (var tree in treeList)
             {
                 bool leftReached = false;
                 int counterLeft = 1;
                 while (!leftReached)
-                {//todo if na wysokość
-                    var searchTree = treeList.FirstOrDefault(x => x.CoordinateX == tree.CoordinateX - counterLeft && x.CoordinateY == tree.CoordinateY);
-                    if (searchTree != null)
+                {
+                    if (tree.CoordinateColumn == 0)
                     {
-                        counterLeft++;
-                        tree.ViewDistanceLeft++;
+                        tree.ViewDistanceLeft = 0;
+                        break;
                     }
-                    else
+
+                    var searchTree = treeList.FirstOrDefault(x => x.CoordinateRow == tree.CoordinateRow && x.CoordinateColumn == tree.CoordinateColumn - counterLeft);
+
+                    if (searchTree == null)
                     {
                         leftReached = true;
                     }
-                    if (tree.CoordinateX == 0) tree.ViewDistanceLeft = 0;
+                    else
+                    {
+                        if (searchTree.Height < tree.Height)
+                        {
+                            counterLeft++;
+                            tree.ViewDistanceLeft++;
+                        }
+                        else
+                        {
+                            tree.ViewDistanceLeft++;
+                            leftReached = true;
+                        }
+                    }
                 }
 
                 bool upReached = false;
                 int counterUp = 1;
                 while (!upReached)
                 {
-                    var searchTree = treeList.FirstOrDefault(x => x.CoordinateX == tree.CoordinateX && x.CoordinateY == tree.CoordinateY - counterUp);
-                    if (searchTree != null)
+                    if (tree.CoordinateRow == 0)
                     {
-                        counterUp++;
-                        tree.ViewDistanceUp++;
+                        tree.ViewDistanceUp = 0;
+                        break;
                     }
-                    else
+
+                    var searchTree = treeList.FirstOrDefault(x => x.CoordinateRow == tree.CoordinateRow - counterUp && x.CoordinateColumn == tree.CoordinateColumn);
+
+                    if (searchTree == null)
                     {
                         upReached = true;
                     }
-                    if (tree.CoordinateY == 0) tree.ViewDistanceUp = 0;
+                    else
+                    {
+                        if (searchTree.Height < tree.Height)
+                        {
+                            counterUp++;
+                            tree.ViewDistanceUp++;
+                        }
+                        else
+                        {
+                            tree.ViewDistanceUp++;
+                            upReached = true;
+                        }
+                    }
                 }
 
                 bool rightReached = false;
                 int counterRight = 1;
                 while (!rightReached)
                 {
-                    var searchTree = treeList.FirstOrDefault(x => x.CoordinateX == tree.CoordinateX + counterRight && x.CoordinateY == tree.CoordinateY);
-                    if (searchTree != null)
+                    if (tree.CoordinateColumn == 98)
                     {
-                        counterRight++;
-                        tree.ViewDistanceRight++;
+                        tree.ViewDistanceRight = 0;
+                        break;
                     }
-                    else
+
+                    var searchTree = treeList.FirstOrDefault(x => x.CoordinateRow == tree.CoordinateRow && x.CoordinateColumn == tree.CoordinateColumn + counterRight);
+
+                    if (searchTree == null)
                     {
                         rightReached = true;
                     }
-                    if (tree.CoordinateX == 98) tree.ViewDistanceRight = 0;
+                    else
+                    {
+                        if (searchTree.Height < tree.Height)
+                        {
+                            counterRight++;
+                            tree.ViewDistanceRight++;
+                        }
+                        else
+                        {
+                            tree.ViewDistanceRight++;
+                            rightReached = true;
+                        }
+                    }
                 }
 
                 bool downReached = false;
                 int counterDown = 1;
                 while (!downReached)
                 {
-                    var searchTree = treeList.FirstOrDefault(x => x.CoordinateX == tree.CoordinateX && x.CoordinateY == tree.CoordinateY + counterDown);
-                    if (searchTree != null)
+                    if (tree.CoordinateRow == 98)
                     {
-                        counterDown++;
-                        tree.ViewDistanceDown++;
+                        tree.ViewDistanceDown = 0;
+                        break;
                     }
-                    else
+
+                    var searchTree = treeList.FirstOrDefault(x => x.CoordinateRow == tree.CoordinateRow + counterDown && x.CoordinateColumn == tree.CoordinateColumn);
+
+                    if (searchTree == null)
                     {
                         downReached = true;
                     }
-                    if (tree.CoordinateY == 98) tree.ViewDistanceDown = 0;
+                    else
+                    {
+                        if (searchTree.Height < tree.Height)
+                        {
+                            counterDown++;
+                            tree.ViewDistanceDown++;
+                        }
+                        else
+                        {
+                            tree.ViewDistanceDown++;
+                            downReached = true;
+                        }
+                    }
                 }
 
                 tree.ScenicScore = tree.ViewDistanceLeft * tree.ViewDistanceUp * tree.ViewDistanceRight * tree.ViewDistanceDown;
             }
 
-            Console.WriteLine($"D8 PT1: {treeList.Count(x => x.IsVisibleFromOutside)}");
             Console.WriteLine($"D8 PT2: {treeList.OrderByDescending(x => x.ScenicScore).First().ScenicScore}");
         }
     }
 
     public class Tree
     {
-        public Tree() { }
-        public Tree(int coordinateX, int coordinateY, int height)
+        public Tree(int coordinateRow, int coordinateColumn, int height)
         {
-            CoordinateX = coordinateX;
-            CoordinateY = coordinateY;
+            CoordinateRow = coordinateRow;
+            CoordinateColumn = coordinateColumn;
             Height = height;
             IsVisibleFromOutside = true;
         }
 
-        public int CoordinateX { get; set; }
-        public int CoordinateY { get; set; }
+        public int CoordinateRow { get; set; }
+        public int CoordinateColumn { get; set; }
         public int Height { get; set; }
         public bool IsVisibleFromOutside { get; set; }
         public int ViewDistanceLeft { get; set; }
