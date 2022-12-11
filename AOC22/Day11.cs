@@ -107,8 +107,8 @@ namespace AOC22
 
             return OperationChar switch
             {
-                '+' => Convert.ToInt64(Math.Floor((decimal)(oldValue + temporaryValue) % superModulo)),
-                '*' => Convert.ToInt64(Math.Floor((decimal)(oldValue * temporaryValue) % superModulo)),
+                '+' => (oldValue + temporaryValue) % superModulo,
+                '*' => (oldValue * temporaryValue) % superModulo,
                 _ => 0,
             };
         }
